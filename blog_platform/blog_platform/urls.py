@@ -17,10 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from app_blog_platform import views
+from django.conf.urls.static import static
+from django.conf import settings
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.new_post, name='new_post'),
 
+    path('list_posts/', views.list_posts, name='list_posts'),
+    path('view_post/<int:post_id>/', views.view_post, name='view_post'),
+
+    path('autocomplete_tags_level_2/', views.autocomplete_tags_level_2, name='autocomplete_tags_level_2'),
+    path('autocomplete_tags_level_3/', views.autocomplete_tags_level_3, name='autocomplete_tags_level_3'),
+
+
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

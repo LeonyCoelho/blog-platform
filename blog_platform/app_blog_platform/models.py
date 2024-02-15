@@ -1,6 +1,6 @@
 from django.db import models
 from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields  import RichTextUploadingField
+from ckeditor_uploader.fields  import  RichTextUploadingField
 from django.contrib.auth.models import User
 
 class Theme(models.Model):
@@ -28,9 +28,18 @@ class Tags_Level_3(models.Model):
     parent_tag = models.ManyToManyField(Tags_Level_2)
     tag_name = models.CharField(max_length=60)
 
+class Post_Slide_Images(models.Model):
+    post_slide_image = models.ImageField(upload_to='images/')
+
+    def __str__(self):
+        return self.image.name
+
 class Post(models.Model):
     post_name = models.CharField(max_length=120, null=False, default='Post Name')
     post_body = RichTextUploadingField(blank=True, null=True)
     post_date = models.DateField(auto_now_add=True)
     post_tag_level_2  = models.ManyToManyField(Tags_Level_2)
     post_tag_level_3  = models.ManyToManyField(Tags_Level_3)
+    post_main_link = models.CharField(max_length=500, null=True)
+    post_main_link_title = models.CharField(max_length=500, null=True)
+    post_slide_images = models.ManyToManyField(Post_Slide_Images)
