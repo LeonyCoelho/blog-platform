@@ -1,87 +1,7 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-          crossorigin="anonymous">
-
-    <title>Nova Postagem</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
 <h1>Nova Postagem</h1>
-
-
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-<script>
-    $(function () {
-        function split(val) {
-            return val.split(/,\s*/);
-        }
-
-        function extractLast(term) {
-            return split(term).pop();
-        }
-
-        $("#tags_level_2").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "{% url 'autocomplete_tags_level_2' %}",
-                    dataType: "json",
-                    data: {
-                        term: extractLast(request.term)
-                    },
-                    success: function (data) {
-                        response(data);
-                    }
-                });
-            },
-            focus: function () {
-                return false;
-            },
-            select: function (event, ui) {
-                var terms = split(this.value);
-                terms.pop();
-                terms.push(ui.item.value);
-                terms.push("");
-                this.value = terms.join(", ");
-                return false;
-            }
-        });
-
-        $("#tags_level_3").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "{% url 'autocomplete_tags_level_3' %}",
-                    dataType: "json",
-                    data: {
-                        term: extractLast(request.term)
-                    },
-                    success: function (data) {
-                        response(data);
-                    }
-                });
-            },
-            focus: function () {
-                return false;
-            },
-            select: function (event, ui) {
-                var terms = split(this.value);
-                terms.pop();
-                terms.push(ui.item.value);
-                terms.push("");
-                this.value = terms.join(", ");
-                return false;
-            }
-        });
-    });
-</script>
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -100,20 +20,81 @@
 
     
 
-    <label for="tags_level_2">Tags de Nível 2:</label>
-    <input type="text" id="tags_level_2" name="post_tag_level_2">
+    <label for="tags_level_1">Categoria</label>
+    <select name="post_tag_level_1" class="tag-level-1">
+        <option hidden disabled selected></option>
+        {% for tags_level_1 in tags_level_1 %}
+        <option value="{{ tags_level_1.id }}">{{tags_level_1.tag_name}}</option>
+        {% endfor %}
+    </select>
     <br>
-
-    <label for="tags_level_3">Tags de Nível 3:</label>
-    <input type="text" id="tags_level_3" name="post_tag_level_3">
+    
+    <label for="tags_level_2">Subcategoria</label>
+    <select name="post_tag_level_2" class="tag-level-2" disabled>
+            <option hidden disabled selected></option>
+            <!-- Options will be populated dynamically using JavaScript -->
+        </select>
+        <br>
+        
+        <label for="tags_level_3">Subcategoria 2</label>
+        <select name="post_tag_level_3" class="tag-level-3" disabled>
+            <option hidden disabled selected></option>
+        <!-- Options will be populated dynamically using JavaScript -->
+    </select>
     <br>
-
+    
 
     <button type="submit">Salvar</button>
 </form>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
-</body>
-</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".tag-level-1").change(function() {
+            var tagLevel1Id = $(this).val();
+            
+            // Habilitar e limpar as seleções subcategorias
+            $(".tag-level-2").prop("disabled", false).empty();
+            $(".tag-level-3").prop("disabled", true).empty();
+    
+            // Adicionar opções subcategorias baseadas na seleção da categoria
+            $.ajax({
+                url: "/get_tags_level_2/",  // Substitua pela URL correta em sua aplicação
+                data: { tag_level_1_id: tagLevel1Id },
+                dataType: "json",
+                success: function(data) {
+                    $.each(data, function(index, tag) {
+                        $(".tag-level-2").append("<option hidden disabled selected></option>");
+                        $(".tag-level-2").append("<option value='" + tag.id + "'>" + tag.tag_name + "</option>");
+                    });
+                }
+            });
+        });
+    
+        $(".tag-level-2").change(function() {
+            var tagLevel2Id = $(this).val();
+            
+            // Habilitar e limpar as seleções subcategorias
+            $(".tag-level-3").prop("disabled", false).empty();
+    
+            // Adicionar opções subcategorias baseadas na seleção da subcategoria
+            $.ajax({
+                url: "/get_tags_level_3/",  // Substitua pela URL correta em sua aplicação
+                data: { tag_level_2_id: tagLevel2Id },
+                dataType: "json",
+                success: function(data) {
+                    $.each(data, function(index, tag) {
+                        $(".tag-level-3").append("<option hidden disabled selected></option>");
+                        $(".tag-level-3").append("<option value='" + tag.id + "'>" + tag.tag_name + "</option>");
+                    });
+                }
+            });
+        });
+    });
+    </script>
+
+
+        
+      {% endblock %}

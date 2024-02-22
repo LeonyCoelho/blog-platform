@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Postagens relacionadas à tag: {{ tag.tag_name }}</h2>
+    <ul>
+        {% for post in posts %}
+            <li>
+                <h3>{{ post.post_name }}</h3>
+                <p>{{ post.post_body|safe }}</p>
+                <p>Categorias:
+                    {% for tag_1 in post.post_tag_level_1.all %}
+                    <a href="{% url 'post_list_by_tag_1' tag_1.id %}">{{ tag_1.tag_name }}</a>
+                    {% endfor %}
+                    {% for tag_2 in post.post_tag_level_2.all %}
+                        <a href="{% url 'post_list_by_tag_2' tag_2.id %}">{{ tag_2.tag_name }}</a>
+                    {% endfor %}
+                    {% for tag_3 in post.post_tag_level_3.all %}
+                        <a href="{% url 'post_list_by_tag_3' tag_3.id %}">{{ tag_3.tag_name }}</a>
+                    {% endfor %}
+                </p>
+                <!-- Adicione outros campos conforme necessário -->
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

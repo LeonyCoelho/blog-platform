@@ -1,65 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ post.post_name }}</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+
     <h1>{{ post.post_name }}</h1>
     <p>Data de Publicação: {{ post.post_date }}</p>
     
     <div>
         {% if post.post_body %}
-            <h2>Conteúdo:</h2>
-            {{ post.post_body|safe }}
+        <h2>Conteúdo:</h2>
+        {{ post.post_body|safe }}
         {% endif %}
     </div>
-
+    
     <div>
         {% if post.post_main_link %}
-            <p>Link Title: {{ post.post_main_link_title }}</p>
-            <p>Link Principal: <a href="{{ post.post_main_link }}" target="_blank">{{ post.post_main_link }}</a></p>
+        <p>Link Title: {{ post.post_main_link_title }}</p>
+        <p>Link Principal: <a href="{{ post.post_main_link }}" target="_blank">{{ post.post_main_link }}</a></p>
         {% endif %}
     </div>
-
-<!-- ... (código anterior) -->
-
-<div>
-    {% if post.post_slide_images.all %}
+    
+    <!-- ... (código anterior) -->
+    
+    <div>
+        {% if post.post_slide_images.all %}
         <h2>Imagens do Slide:</h2>
         <ul>
             {% for image in post.post_slide_images.all %}
                 <li><img src="{{ image.post_slide_image.url }}" alt="Slide Image"></li>
             {% endfor %}
         </ul>
-    {% endif %}
-</div>
-
-<!-- ... (código anterior) -->
-
-
+        {% endif %}
+    </div>
+    
+    <!-- ... (código anterior) -->
+    
+    
     <div>
         {% if post.post_tag_level_2.all %}
-            <h2>Tags de Nível 2:</h2>
-            <ul>
-                {% for tag_level_2 in post.post_tag_level_2.all %}
-                    <li>{{ tag_level_2.tag_name }}</li>
-                {% endfor %}
-            </ul>
+        <h2>Tags de Nível 2:</h2>
+        <ul>
+            {% for tag_level_2 in post.post_tag_level_2.all %}
+            <li>{{ tag_level_2.tag_name }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
     </div>
-
+    
     <div>
         {% if post.post_tag_level_3.all %}
-            <h2>Tags de Nível 3:</h2>
-            <ul>
-                {% for tag_level_3 in post.post_tag_level_3.all %}
-                    <li>{{ tag_level_3.tag_name }}</li>
-                {% endfor %}
-            </ul>
+        <h2>Tags de Nível 3:</h2>
+        <ul>
+            {% for tag_level_3 in post.post_tag_level_3.all %}
+            <li>{{ tag_level_3.tag_name }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
     </div>
-
-</body>
-</html>
+</div>
+    
+    {% endblock %}
+    
+    

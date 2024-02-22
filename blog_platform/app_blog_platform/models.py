@@ -38,6 +38,7 @@ class Post(models.Model):
     post_name = models.CharField(max_length=120, null=False, default='Post Name')
     post_body = RichTextUploadingField(blank=True, null=True)
     post_date = models.DateField(auto_now_add=True)
+    post_tag_level_1  = models.ManyToManyField(Tags_Level_1)
     post_tag_level_2  = models.ManyToManyField(Tags_Level_2)
     post_tag_level_3  = models.ManyToManyField(Tags_Level_3)
     post_main_link = models.CharField(max_length=500, null=True)
