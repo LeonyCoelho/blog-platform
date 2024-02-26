@@ -29,6 +29,8 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('get_tags_level_2/', views.get_tags_level_2, name='get_tags_level_2'),
     path('get_tags_level_3/', views.get_tags_level_3, name='get_tags_level_3'),
+    path('search/', views.search_posts, name='search_posts'),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

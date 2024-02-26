@@ -28,3 +28,9 @@ body{
   }
 }	
 /* ============ small devices .end// ============ */
+
+.post_list_card{
+    height: 280px;
+    padding: 15px;
+}
+

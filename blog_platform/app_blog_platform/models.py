@@ -43,4 +43,5 @@ class Post(models.Model):
     post_tag_level_3  = models.ManyToManyField(Tags_Level_3)
     post_main_link = models.CharField(max_length=500, null=True)
     post_main_link_title = models.CharField(max_length=500, null=True)
+    post_cover_image = models.ImageField(upload_to='images/cover/', null=True)
     post_slide_images = models.ManyToManyField(Post_Slide_Images)

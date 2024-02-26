@@ -5,6 +5,8 @@ from django.views.decorators.http import require_GET
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.db.models import Q
+from django.core.paginator import Paginator
+
 
 
 from .models import Post, Post_Slide_Images,Tags_Level_1 ,Tags_Level_2, Tags_Level_3
@@ -20,13 +22,15 @@ def new_post(request):
         post_body = request.POST.get('post_body')
         post_main_link_title = request.POST.get('post_main_link_title')
         post_main_link = request.POST.get('post_main_link')
+        post_cover_image = request.FILES.get('post_cover_image')
 
         # Criar uma nova instância do Post
         new_post_instance = Post.objects.create(
             post_name=post_name,
             post_body=post_body,
             post_main_link=post_main_link,
-            post_main_link_title=post_main_link_title
+            post_main_link_title=post_main_link_title,
+            post_cover_image=post_cover_image
         )
 
         # Adicionar tags de nível 1 ao post, se existirem
@@ -95,19 +99,31 @@ def get_tag(request, tag_id):
 
 def post_list_by_tag_1(request, tag_id):
     tag = get_object_or_404(Tags_Level_1, id=tag_id)
-    posts = Post.objects.filter(post_tag_level_1__id=tag_id)
+    posts_list = Post.objects.filter(post_tag_level_1__id=tag_id)
+    items_per_page = 6
+    paginator = Paginator(posts_list, items_per_page)
+    page = request.GET.get('page', 1)
+    posts = paginator.get_page(page)
     return render(request, 'post_list_by_tag.html', {'tag': tag, 'posts': posts})
 
 
 def post_list_by_tag_2(request, tag_id):
     tag = get_object_or_404(Tags_Level_2, id=tag_id)
-    posts = Post.objects.filter(post_tag_level_2__id=tag_id)
+    posts_list = Post.objects.filter(post_tag_level_2__id=tag_id)
+    items_per_page = 6
+    paginator = Paginator(posts_list, items_per_page)
+    page = request.GET.get('page', 1)
+    posts = paginator.get_page(page)
     return render(request, 'post_list_by_tag.html', {'tag': tag, 'posts': posts})
 
 
 def post_list_by_tag_3(request, tag_id):
     tag = get_object_or_404(Tags_Level_3, id=tag_id)
-    posts = Post.objects.filter(post_tag_level_3__id=tag_id)
+    posts_list = Post.objects.filter(post_tag_level_3__id=tag_id)
+    items_per_page = 6
+    paginator = Paginator(posts_list, items_per_page)
+    page = request.GET.get('page', 1)
+    posts = paginator.get_page(page)
     return render(request, 'post_list_by_tag.html', {'tag': tag, 'posts': posts})
 
 
@@ -188,6 +204,21 @@ def create_tag_3(request):
 
 from django.http import JsonResponse
 
+
+def search_posts(request):
+    query = request.GET.get('query')
+    
+    if query:
+        posts_list = Post.objects.filter(Q(post_name__icontains=query) | Q(post_body__icontains=query)).distinct()
+        items_per_page = 6
+        paginator = Paginator(posts_list, items_per_page)
+        page = request.GET.get('page', 1)
+        posts = paginator.get_page(page)
+
+    else:
+        posts = Post.objects.all()
+
+    return render(request, 'search_results.html', {'query': query, 'posts': posts})
 
 
 def get_tags_level_2(request):
