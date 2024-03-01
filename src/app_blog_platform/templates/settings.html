@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card mt-3">
+                <div class="card-header">
+                    GERAL
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'edit_global_settings' %}">
+                        {% csrf_token %}
+                        <div class="">
+                            <label class="form-control-label">Nome do Site</label>
+                            <input type="text" class="form-control" name="blog_name" value="{{global_settings.blog_name}}">
+                            <label class="form-control-label">Theme</label>
+                            <select class="form-control" name="theme" >
+                                {% for theme in themes %}
+                                <option value="{{ theme.theme_name }}" {% if theme in global_settings.theme.all %}selected{% endif %}>{{ theme.theme_name }}</option>
+                            {% endfor %}
+                            </select>
+                            <button class="btn btn-primary form-button mt-3" type="submit" >Aplicar</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body">
+                    {% if global_settings %}
+                        {% if global_settings.bg_image %}
+                            <img src="{{ global_settings.bg_image.url }}" alt="BG" height="100px">
+                            {% else %}
+                        {% endif %}
+                    {% endif %}
+                    <form method="post" action="{% url 'edit_bg' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label class="form-check-label mt-3">Plano de fundo</label>
+                        <input type="file" class="form-control" name="bg_image">
+                        <button class="form-button btn btn-primary mt-3">Aplicar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card mt-3 custom-card">
+                <div class="card-header custom-card-header d-flex justify-content-between align-items-center">
+                    Categoria
+                </div>
+                <div class="card-body">
+                    <form method="post" method="post" action="{% url 'create_tag_1' %}" class="form-inline" id="category-form">
+                        <div class="input-group">
+                            {% csrf_token %}
+                            <input type="text" class="form-control" name="tag_name1">
+                            <button class="btn btn-primary form-button" type="submit"><span><i class="nf nf-oct-diff_added"></i></span></button>
+                        </div>
+                    </form>
+
+                    <div class="settings-box">
+                        <form method="post" id="delete-selected">
+                            {% csrf_token %}
+                            <ul class="list-group" id="category-list">
+                                {% for tag_lvl_1 in tags_level_1 %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalT2{{ tag_lvl_1.id }}">
+                                        <div class="form-check">
+                                            <input class="form-check-input tag-lvl-1" type="checkbox" name="selected_items" value="{{ tag_lvl_1.id }}" data-tag-lvl-1-id="{{ tag_lvl_1.id }}">
+                                            <label class="form-check-label">
+                                                {{ tag_lvl_1.tag_name }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <button type="button" id="delete-selected" class="btn btn-danger mt-2">Remover</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card mt-3">
+                <div class="card-header">SOBRE</div>
+                <div class="card-body">
+                    {% if about %}
+                        {% if about.about_image %}
+                            <img src="{{ about.about_image.url }}" alt="BG" height="100px">
+                        {% endif %}
+                    {% endif %}
+                    <form method="post" action="{% url 'edit_about' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label class="form-control-label">Texto para a pagina "SOBRE"</label>
+                        <input type="text" class="form-control" name="about_text">
+                        <label class="form-check-label mt-3">Imagem ilustrativa</label>
+                        <input type="file" class="form-control" name="about_image">
+                        <button class="form-button btn btn-primary mt-3">Aplicar</button>
+                    </form>
+                    <!-- botao pra desativar imagem  aqui -->
+                    <form method="post" action="{% url 'toggle_use_image' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="form-button btn btn-danger mt-3">
+                            {% if about.use_image %}
+                                Desativar Imagem
+                            {% else %}
+                                Ativar Imagem
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card mt-3">
+                <div class="card-header">HOME</div>
+                <div class="card-body">
+                    {% if home %}
+                        {% if home.home_slide.all %}
+                            {% for home_slide_image in home.home_slide.all %}
+                                <img src="{{ home_slide_image.home_slide_image.url }}" alt="BG" height="100px">
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                    <form method="post" action="{% url 'edit_home' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label class="form-check-label mt-3">Imagens do Slide</label>
+                        <input type="file" class="form-control" name="home_slide_images" multiple>
+                        <button class="form-button btn btn-primary mt-3">Aplicar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+<!-- MODALS  ---------------------------------------------------------------------------------------------------------- -->
+
+<!-- Modals for Tags_Level_1 and Tags_Level_2 -->
+{% for tag_lvl_1 in tags_level_1 %}
+    <!-- Modal for Tags_Level_2 -->
+    <div class="modal fade" id="modalT2{{ tag_lvl_1.id }}" tabindex="-1" aria-labelledby="modalT2Label{{ tag_lvl_1.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalT2Label{{ tag_lvl_1.id }}">{{ tag_lvl_1.tag_name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Conteúdo do Modal de Tags_Level_2 -->
+
+                    <!-- Formulário para criar Tags_Level_3 -->
+                    <form method="post" action="{% url 'create_tag_2' %}" class="form-inline" id="tag-level-2-form">
+                        <div class="input-group">
+                            {% csrf_token %}
+                            <input class="form-control" type="text" name="tag_name2">
+                            <input type="hidden" name="parent_tag" value="{{ tag_lvl_1.id }}">
+                            <button class="btn btn-primary form-button" type="submit"><span><i class="nf nf-oct-diff_added"></i></span></button>
+                        </div>
+                    </form>
+
+                    <!-- Lista de Tags_Level_2 associadas a Tags_Level_1 -->
+                    <div class="category-settings-box">
+                        <ul class="list-group" id="tag-level-2-list">
+                            {% for tag_lvl_2 in tag_lvl_1.tags_level_2_set.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalT3{{ tag_lvl_2.id }}">
+                                    <div class="form-check">
+                                        <input class="form-check-input tag-lvl-2" type="checkbox" name="selected_items_category" value="{{ tag_lvl_2.id }}" data-tag-lvl-2-id="{{ tag_lvl_2.id }}">
+                                        <label class="form-check-label">
+                                            {{ tag_lvl_2.tag_name }}
+                                        </label>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <button type="button" id="delete-selected-tag-lvl-2-button" class="btn btn-danger mt-2">Remover</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for tag_lvl_2 in tag_lvl_1.tags_level_2_set.all %}
+        <!-- Modal for Tags_Level_3 -->
+        <div class="modal fade" id="modalT3{{ tag_lvl_2.id }}" tabindex="-1" aria-labelledby="modalT3Label{{ tag_lvl_2.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalT3Label{{ tag_lvl_2.id }}">{{ tag_lvl_2.tag_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Conteúdo do Modal de Tags_Level_3 -->
+
+                        <!-- Formulário para criar Tags_Level_3 -->
+                        <form method="post" action="{% url 'create_tag_3' %}" class="form-inline" id="tag-level-3-form">
+                            <div class="input-group">
+                                {% csrf_token %}
+                                <input class="form-control" type="text" name="tag_name3">
+                                <input type="hidden" name="parent_tag" value="{{ tag_lvl_2.id }}">
+                                <button class="btn btn-primary form-button" type="submit"><span><i class="nf nf-oct-diff_added"></i></span></button>
+                            </div>
+                        </form>
+
+                        <!-- Lista de Tags_Level_3 associadas a Tags_Level_2 -->
+                        <div class="category-settings-box">
+                            <ul class="list-group" id="tag-level-3-list">
+                                {% for tag_lvl_3 in tag_lvl_2.tags_level_3_set.all %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input tag-lvl-3" type="checkbox" name="selected_items_category" value="{{ tag_lvl_3.id }}" data-tag-lvl-3-id="{{ tag_lvl_3.id }}">
+                                            <label class="form-check-label">
+                                                {{ tag_lvl_3.tag_name }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <button type="button" id="delete-selected-tag-lvl-3-button" class="btn btn-danger mt-2">Remover</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+
+
+
+
+
+{% endblock %}

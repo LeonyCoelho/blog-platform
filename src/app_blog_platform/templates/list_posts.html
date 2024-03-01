@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+
+    <!-- <ul>
+        {% for tags_level_1 in tags_level_1 %}
+        <li>{{tags_level_1.tag_name}}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for tags_level_2 in tags_level_2 %}
+        <li>{{tags_level_2.tag_name}}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for tags_level_3 in tags_level_3 %}
+        <li>{{tags_level_3.tag_name}}</li>
+        {% endfor %}
+    </ul> -->
+
+    <h1>Listagem de Postagens</h1>
+    <ul>
+        {% for post in posts %}
+            <li><a href="{% url 'view_post' post_id=post.id %}">{{ post.post_name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+{% endblock %}
