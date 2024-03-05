@@ -1,97 +1,111 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-<h1>Nova Postagem</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card mt-3">
+            <div class="card-header">
+                Nova Postagem
+            </div>
+            <div class="card-body">
+                <label class="form-control-label" for="post_name">Nome do Post:</label>
+                <input class="form-control" type="text" name="post_name" required>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="post_name">Nome do Post:</label>
-    <input type="text" name="post_name" required>
-    <br>
-    <label for="post_body">Corpo do Post:</label>
-    <textarea name="post_body" rows="4" cols="50"></textarea>
-    <br>
-    <label for="post_main_link_title">Titulo do Link:</label>
-    <input type="text" name="post_main_link_title">
-    <br>
-    <label for="post_main_link">Link Principal:</label>
-    <input type="text" name="post_main_link">
-    <br>
-    <label for="post_slide_images">Capa da Publicação:</label>
-    <input type="file" name="post_cover_image" accept="image/cover/*">
-    <br>
-    <label for="post_slide_images">Imagens do Slide:</label>
-    <input type="file" name="post_slide_images" multiple accept="image/*">
-    <br>
+                <div class="row">
+                    <div class="col-4">
+                        <label class="form-control-label" for="tags_level_1">Categoria</label>
+                        <select class="form-control tag-level-1" name="post_tag_level_1">
+                            <option hidden disabled selected></option>
+                            {% for tags_level_1 in tags_level_1 %}
+                            <option value="{{ tags_level_1.id }}">{{ tags_level_1.tag_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-control-label" for="tags_level_2">Subcategoria</label>
+                        <select class="form-control tag-level-2" name="post_tag_level_2" disabled>
+                            <option hidden disabled selected></option>
+                            <!-- Options will be populated dynamically using JavaScript -->
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-control-label" for="tags_level_3">Subcategoria 2</label>
+                        <select class="form-control tag-level-3" name="post_tag_level_3" disabled>
+                            <option hidden disabled selected></option>
+                            <!-- Options will be populated dynamically using JavaScript -->
+                        </select>
+                    </div>
+                </div>
 
-    
-
-    <label for="tags_level_1">Categoria</label>
-    <select name="post_tag_level_1" class="tag-level-1">
-        <option hidden disabled selected></option>
-        {% for tags_level_1 in tags_level_1 %}
-        <option value="{{ tags_level_1.id }}">{{tags_level_1.tag_name}}</option>
-        {% endfor %}
-    </select>
-    <br>
-    
-    <label for="tags_level_2">Subcategoria</label>
-    <select name="post_tag_level_2" class="tag-level-2" disabled>
-            <option hidden disabled selected></option>
-            <!-- Options will be populated dynamically using JavaScript -->
-        </select>
-        <br>
-        
-        <label for="tags_level_3">Subcategoria 2</label>
-        <select name="post_tag_level_3" class="tag-level-3" disabled>
-            <option hidden disabled selected></option>
-        <!-- Options will be populated dynamically using JavaScript -->
-    </select>
-    <br>
-    
-
-    <button type="submit">Salvar</button>
-</form>
+                <label class="form-control-label" for="post_body">Corpo do Post:</label>
+                <textarea class="form-control" name="post_body" rows="4" cols="50"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="card mt-3">
+                    <div class="card-header">Link Extra</div>
+                    <div class="card-body">
+                        <label class="form-control-label" for="post_main_link_title">Titulo do Link:</label>
+                        <input class="form-control" type="text" name="post_main_link_title">
+                        <label class="form-control-label" for="post_main_link">Link Principal:</label>
+                        <input class="form-control" type="text" name="post_main_link">
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card mt-3">
+                    <div class="card-header">Slide</div>
+                    <div class="card-body">
+                        <label class="form-control-label" for="post_slide_images">Capa da Publicação:</label>
+                        <input class="form-control" type="file" name="post_cover_image" accept="image/cover/*">
+                        <label class="form-control-label" for="post_slide_images">Imagens do Slide:</label>
+                        <input class="form-control" type="file" name="post_slide_images" multiple accept="image/*">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary mt-3" type="submit">Publicar</button>
+    </form>
 </div>
-
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $(".tag-level-1").change(function() {
+    $(document).ready(function () {
+        $(".tag-level-1").change(function () {
             var tagLevel1Id = $(this).val();
-            
+
             // Habilitar e limpar as seleções subcategorias
             $(".tag-level-2").prop("disabled", false).empty();
             $(".tag-level-3").prop("disabled", true).empty();
-    
+
             // Adicionar opções subcategorias baseadas na seleção da categoria
             $.ajax({
                 url: "/get_tags_level_2/",  // Substitua pela URL correta em sua aplicação
                 data: { tag_level_1_id: tagLevel1Id },
                 dataType: "json",
-                success: function(data) {
-                    $.each(data, function(index, tag) {
+                success: function (data) {
+                    $.each(data, function (index, tag) {
                         $(".tag-level-2").append("<option hidden disabled selected></option>");
                         $(".tag-level-2").append("<option value='" + tag.id + "'>" + tag.tag_name + "</option>");
                     });
                 }
             });
         });
-    
-        $(".tag-level-2").change(function() {
+
+        $(".tag-level-2").change(function () {
             var tagLevel2Id = $(this).val();
-            
+
             // Habilitar e limpar as seleções subcategorias
             $(".tag-level-3").prop("disabled", false).empty();
-    
+
             // Adicionar opções subcategorias baseadas na seleção da subcategoria
             $.ajax({
                 url: "/get_tags_level_3/",  // Substitua pela URL correta em sua aplicação
                 data: { tag_level_2_id: tagLevel2Id },
                 dataType: "json",
-                success: function(data) {
-                    $.each(data, function(index, tag) {
+                success: function (data) {
+                    $.each(data, function (index, tag) {
                         $(".tag-level-3").append("<option hidden disabled selected></option>");
                         $(".tag-level-3").append("<option value='" + tag.id + "'>" + tag.tag_name + "</option>");
                     });
@@ -99,8 +113,8 @@
             });
         });
     });
-    </script>
+</script>
 
 
-        
-      {% endblock %}
+
+{% endblock %}

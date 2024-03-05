@@ -4,6 +4,16 @@ body{
     background-color: rgb(218, 218, 218);
 }
 
+/* ============ NAVBAR ==================*/
+
+.top_logo{
+	height: 45px;
+}
+
+.navbar-brand{
+	padding-top: 0;
+	padding-bottom: 0;
+}
 
 /* ============ desktop view ============ */
 @media all and (min-width: 992px) {
@@ -19,7 +29,35 @@ body{
 	.dropdown-menu > li:hover{ background-color: #f1f1f1 }
 	.dropdown-menu > li:hover > .submenu{ display: block; }
 }	
-/* ============ desktop view .end// ============ */
+
+/* ============ view post ================ */
+
+.modal-slide-bg{
+	background-color:transparent;
+}
+
+.modal-slide-image {
+    max-height: 100vh; /* Define a altura máxima em relação à altura da viewport */
+    width: auto;
+    margin: 0 auto;
+}
+
+
+.modal-slide-image{
+	display: inline-block;
+}
+
+.btn-close-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+	z-index: 100;
+}
+
+.btn-close-light {
+    --bs-bg-opacity: 1;
+    background-color: #f8f9fa;
+}
 
 /* ============ small devices ============ */
 @media (max-width: 991px) {
@@ -30,6 +68,14 @@ body{
 /* ============ small devices .end// ============ */
 
 .post_list_card{
-    height: 280px;
     padding: 15px;
 }
+
+/* ============ ABOUT PAGE =================== */
+
+.about_image{
+	width: 100%;
+}
+
+/* ============ HOME POST LIST =============== */
+

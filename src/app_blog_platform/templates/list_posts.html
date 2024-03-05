@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
 
 <div class="container">
 
@@ -20,11 +21,45 @@
     </ul> -->
 
     <h1>Listagem de Postagens</h1>
-    <ul>
-        {% for post in posts %}
-            <li><a href="{% url 'view_post' post_id=post.id %}">{{ post.post_name }}</a></li>
-        {% endfor %}
-    </ul>
+    {% for post in posts %}
+        <div class="card mt-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-auto">
+                        {% if post.post_cover_image %}
+                            <img src="{{ post.post_cover_image.url }}" width="100px">
+                        {% else %}
+                            <img src="{% static 'placeholder.png' %}" width="100px">
+                        {% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <h4>{{ post.post_name }}</h4>
+                        <div class="mt-2">
+                            <a class="btn btn-outline-secondary" href="{% url 'view_post' post_id=post.id %}">Ver post</a>
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove_modal_{{post.id}}">
+                                Remover
+                              </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="remove_modal_{{post.id}}" tabindex="-1" aria-labelledby="remove_modal_{{post.id}}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="remove_modal_{{post.id}}">Deletar {{post.post_name}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-outline-danger" href="{% url 'delete_post' post_id=post.id %}">Remover</a>
+                </div>
+              </div>
+            </div>
+          </div>
+    {% endfor %}
 </div>
 
 

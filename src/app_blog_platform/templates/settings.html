@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="container">
-    <div class="row">
+    <div class="row" data-masonry='{"percentPosition": true }'>
         <div class="col-6">
             <div class="card mt-3">
                 <div class="card-header">
@@ -24,17 +24,47 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card mt-3">
+                <div class="card-header">
+                    PLANO DE FUNDO
+                </div>
                 <div class="card-body">
                     {% if global_settings %}
                         {% if global_settings.bg_image %}
-                            <img src="{{ global_settings.bg_image.url }}" alt="BG" height="100px">
+                            <img src="{{ global_settings.bg_image.url }}" alt="BG" class="mb-3" height="100px">
                             {% else %}
                         {% endif %}
                     {% endif %}
                     <form method="post" action="{% url 'edit_bg' %}" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <label class="form-check-label mt-3">Plano de fundo</label>
+                        <label class="form-check-label">Plano de fundo</label>
                         <input type="file" class="form-control" name="bg_image">
+                        <button class="form-button btn btn-primary mt-3">Aplicar</button>
+                        {% if global_settings.bg_image %}<a class="btn btn-outline-danger mt-3" href="{% url 'remove_bg' %}"> Remover </a>{% else %}{% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card mt-3">
+                <div class="card-header">
+                    LOGO
+                </div>
+                <div class="card-body">
+                    {% if global_settings %}
+                        {% if global_settings.logo_image %}
+                            <img src="{{ global_settings.logo_image.url }}" alt="logo" class="mb-3" height="100px">
+                            {% else %}
+                        {% endif %}
+                    {% endif %}
+                    <form method="post" action="{% url 'edit_logo' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label class="form-check-label">Logo</label>
+                        <input type="file" class="form-control" name="logo_image">
+                        {% if global_settings.logo_image %}<a class="btn btn-outline-danger mt-3" href="{% url 'remove_logo' %}"> Remover </a>{% else %}{% endif %}
                         <button class="form-button btn btn-primary mt-3">Aplicar</button>
                     </form>
                 </div>
@@ -55,14 +85,10 @@
                     </form>
 
                     <div class="settings-box">
-                        <form method="post" id="delete-selected">
-                            {% csrf_token %}
                             <ul class="list-group" id="category-list">
                                 {% for tag_lvl_1 in tags_level_1 %}
                                     <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalT2{{ tag_lvl_1.id }}">
                                         <div class="form-check">
-                                            <input class="form-check-input tag-lvl-1" type="checkbox" name="selected_items" value="{{ tag_lvl_1.id }}" data-tag-lvl-1-id="{{ tag_lvl_1.id }}">
-                                            <label class="form-check-label">
                                                 {{ tag_lvl_1.tag_name }}
                                             </label>
                                         </div>
@@ -70,8 +96,6 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                        <button type="button" id="delete-selected" class="btn btn-danger mt-2">Remover</button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -87,7 +111,7 @@
                     <form method="post" action="{% url 'edit_about' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <label class="form-control-label">Texto para a pagina "SOBRE"</label>
-                        <input type="text" class="form-control" name="about_text">
+                        <input type="text" class="form-control" name="about_text" value="{{about.about_text}}">
                         <label class="form-check-label mt-3">Imagem ilustrativa</label>
                         <input type="file" class="form-control" name="about_image">
                         <button class="form-button btn btn-primary mt-3">Aplicar</button>
@@ -126,7 +150,7 @@
                 </div>
             </div>
         </div>
-        
+        </div>
     </div>
 </div>
 
@@ -162,20 +186,12 @@
                             {% for tag_lvl_2 in tag_lvl_1.tags_level_2_set.all %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalT3{{ tag_lvl_2.id }}">
                                     <div class="form-check">
-                                        <input class="form-check-input tag-lvl-2" type="checkbox" name="selected_items_category" value="{{ tag_lvl_2.id }}" data-tag-lvl-2-id="{{ tag_lvl_2.id }}">
-                                        <label class="form-check-label">
                                             {{ tag_lvl_2.tag_name }}
-                                        </label>
                                     </div>
                                 </li>
                             {% endfor %}
                         </ul>
                     </div>
-                    <button type="button" id="delete-selected-tag-lvl-2-button" class="btn btn-danger mt-2">Remover</button>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -209,20 +225,15 @@
                                 {% for tag_lvl_3 in tag_lvl_2.tags_level_3_set.all %}
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <div class="form-check">
-                                            <input class="form-check-input tag-lvl-3" type="checkbox" name="selected_items_category" value="{{ tag_lvl_3.id }}" data-tag-lvl-3-id="{{ tag_lvl_3.id }}">
-                                            <label class="form-check-label">
                                                 {{ tag_lvl_3.tag_name }}
-                                            </label>
+                                                <a href="{% url 'delete_tag_3' tag_3=tag_lvl_3.id %}">remover</a>
+
+
                                         </div>
                                     </li>
                                 {% endfor %}
                             </ul>
                         </div>
-                        <button type="button" id="delete-selected-tag-lvl-3-button" class="btn btn-danger mt-2">Remover</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -232,6 +243,9 @@
 
 
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
 
 
 

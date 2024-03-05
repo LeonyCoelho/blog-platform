@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.views.decorators.http import require_POST
 
 
 
@@ -119,6 +120,11 @@ def new_post(request):
 
     return render(request, 'new_post.html', {'tags_level_2': tags_level_2, 'tags_level_3': tags_level_3})
 
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.delete()
+    return redirect('list_posts')
+
 @require_GET
 def autocomplete_tags_level_2(request):
     term = request.GET.get('term', '')
@@ -191,6 +197,22 @@ def edit_bg(request):
         bg_image = request.FILES.get('bg_image')
         global_settings.bg_image = bg_image
         global_settings.save()
+    return redirect('settings')
+
+def remove_bg(request):
+    Global_Settings.objects.all().update(bg_image='')
+    return redirect('settings')
+
+def edit_logo(request):
+    global_settings, create = Global_Settings.objects.get_or_create()
+    if request.method == 'POST':
+        logo_image = request.FILES.get('logo_image')
+        global_settings.logo_image = logo_image
+        global_settings.save()
+    return redirect('settings')
+
+def remove_logo(request):
+    Global_Settings.objects.all().update(logo_image='')
     return redirect('settings')
 
 
@@ -280,6 +302,16 @@ def create_tag_3(request):
         new_tag_level_3.parent_tag.set([parent_tag])
 
     return redirect(reverse('settings'))
+
+
+def delete_tag_3(request, tag_3):
+        tag = get_object_or_404(Tags_Level_3, id=tag_3)
+        print('Error on delete tag:', tag_3)
+        tag.delete()
+        return redirect('settings')
+
+
+
 
 
 ##################################
