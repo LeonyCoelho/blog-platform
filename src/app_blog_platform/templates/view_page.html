@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="card mt-3">
+        <div class="card-body">
+            <h1 class="card-title">{{ page.page_name }}</h1>
+            <p class="card-text">Data de Publicação: {{ page.page_date }}</p>
+            <p class="card-text">Categorias:
+                {% if page.page_tag_level_1.all %}
+                    {% for tag_level_1 in page.page_tag_level_1.all %}
+                        {{ tag_level_1.tag_name }}
+                    {% endfor %}
+                {% endif %}
+                    {% if page.page_tag_level_2.all %}
+                    {% for tag_level_2 in page.page_tag_level_2.all %}
+                        {{ tag_level_2.tag_name }}
+                    {% endfor %}
+                {% endif %}
+                {% if page.page_tag_level_3.all %}
+                    {% for tag_level_3 in page.page_tag_level_3.all %}
+                        {{ tag_level_3.tag_name }}
+                    {% endfor %}
+                {% endif %}
+            </p>
+        </div>
+        {% if page.page_main_link %}
+            <div class="mb-3 text-center">
+                <a class="btn bg-primary text-light" href="{{ page.page_main_link }}" target="_blank">{{ page.page_main_link_title }}</a>
+            </div>
+        {% endif %}
+        <div class="card-body">
+            {% if page.page_slide_images.all %}
+                <div id="page_slide" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        {% for image in page.page_slide_images.all %}
+                            <button type="button" data-bs-target="#page_slide" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %} aria-label="Slide {{ forloop.counter }}">
+                            </button>
+                        {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                        {% for image in page.page_slide_images.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.page_slide_image.url }}" class="d-block w-100" data-bs-toggle="modal" data-bs-target="#exampleModal" alt="Slide Image">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#page_slide" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#page_slide" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content modal-slide-bg">
+                        <div class="modal-body d-flex justify-content-center align-items-center">
+                            <div id="modal_slide" class="carousel slide" data-bs-ride="carousel" style="max-width: 80%;">
+                                <div class="carousel-inner">
+                                    {% for image in page.page_slide_images.all %}
+                                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                            <img src="{{ image.page_slide_image.url }}" class="d-block mx-auto modal-slide-image" alt="Slide Image">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>   
+                        <button type="button" class="btn-close btn-close-top btn-close-light mt-3 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    </div>
+                </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#modal_slide" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#modal_slide" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    </div>
+                    {% endif %}
+                    {% if page.page_body %}
+                    <div class="mt-3">
+                        <p class="card-text">
+                            {{ page.page_body|safe }}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+            
+    {% endblock %}
+    
+    

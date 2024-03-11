@@ -28,10 +28,16 @@
               <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
 
                 <li class="nav-item">
+                  <a class="nav-link" href="{% url 'new_post' %}">Nova Postagem</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="{% url 'list_posts' %}">Todas as Postagens</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'new_post' %}">Nova Postagem</a>
+                  <a class="nav-link" href="{% url 'new_page' %}">Nova Pagina</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'list_pages' %}">Todas as Paginas</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'settings' %}">Configuração</a>
@@ -58,15 +64,15 @@
               <a class="navbar-brand" href="#">{{global_settings.blog_name}}</a>
               {% endif %}
             {% else %}
-            <a class="navbar-brand" href="#">Brand</a>
+            <a class="navbar-brand" href="#">Meu Site</a>
           {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav"  aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav">
-            <li class="nav-item active"> <a class="nav-link" href="{% url 'home' %}">Home </a> </li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"> About </a></li>
+            <li class="nav-item active"> <a class="nav-link" href="{% url 'home' %}">Inicio </a> </li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"> Sobre </a></li>
             {% for tag_lvl_1 in tags_level_1 %}
             {% if tag_lvl_1.tags_level_2_set.all %}
                 <li class="nav-item dropdown" id="myDropdown">
@@ -80,9 +86,21 @@
                                         {% for tag_lvl_3 in tag_lvl_2.tags_level_3_set.all %}
                                             <li><a class="dropdown-item" href="{% url 'post_list_by_tag_3' tag_id=tag_lvl_3.id %}">{{ tag_lvl_3.tag_name }}</a></li>
                                         {% endfor %}
+                                        {% for page in pages_lv3 %}
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'view_page' page_id=page.id %}">{{ page.page_name }}</a>
+                                        </li>
+                                    {% endfor %}
                                     </ul>
                                 {% endif %}
                             </li>
+                        {% endfor %}
+                        {% for page in pages_lv2 %}
+                            {% if tag_lvl_1 in page.page_tag_level_1.all %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'view_page' page_id=page.id %}">{{ page.page_name }}</a>
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 </li>
@@ -93,6 +111,17 @@
             {% endif %}
         {% endfor %}
         
+        {% for page in pages_lv1 %}
+            <li>
+                <a class="nav-link" href="{% url 'view_page' page_id=page.id %}">{{ page.page_name }}</a>
+            </li>
+        {% endfor %}
+        
+        <!-- {% for page in pages %}
+        <li>
+          <a class="nav-link">{{ page.page_name }}</a>
+        </li>
+        {% endfor %} -->
           
           </ul>
         </div>

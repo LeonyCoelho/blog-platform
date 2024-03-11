@@ -87,10 +87,10 @@
                     <div class="settings-box">
                             <ul class="list-group" id="category-list">
                                 {% for tag_lvl_1 in tags_level_1 %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalT2{{ tag_lvl_1.id }}">
-                                        <div class="form-check">
-                                                {{ tag_lvl_1.tag_name }}
-                                            </label>
+                                    <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalT2{{ tag_lvl_1.id }}">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                                    {{ tag_lvl_1.tag_name }}
+                                                    <a class="btn btn-sm btn-outline-danger" href="{% url 'delete_tag_1' tag_1=tag_lvl_1.id %}">remover</a>
                                         </div>
                                     </li>
                                 {% endfor %}
@@ -119,7 +119,7 @@
                     <!-- botao pra desativar imagem  aqui -->
                     <form method="post" action="{% url 'toggle_use_image' %}">
                         {% csrf_token %}
-                        <button type="submit" class="form-button btn btn-danger mt-3">
+                        <button type="submit" class="form-button btn btn-outline-danger mt-3">
                             {% if about.use_image %}
                                 Desativar Imagem
                             {% else %}
@@ -184,9 +184,10 @@
                     <div class="category-settings-box">
                         <ul class="list-group" id="tag-level-2-list">
                             {% for tag_lvl_2 in tag_lvl_1.tags_level_2_set.all %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalT3{{ tag_lvl_2.id }}">
-                                    <div class="form-check">
+                                <li class="list-group-item" data-bs-toggle="modal" data-bs-target="#modalT3{{ tag_lvl_2.id }}">
+                                    <div class="d-flex justify-content-between align-items-center">
                                             {{ tag_lvl_2.tag_name }}
+                                            <a class="btn btn-sm btn-outline-danger" href="{% url 'delete_tag_2' tag_2=tag_lvl_2.id %}">remover</a>
                                     </div>
                                 </li>
                             {% endfor %}
@@ -223,12 +224,10 @@
                         <div class="category-settings-box">
                             <ul class="list-group" id="tag-level-3-list">
                                 {% for tag_lvl_3 in tag_lvl_2.tags_level_3_set.all %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div class="form-check">
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
                                                 {{ tag_lvl_3.tag_name }}
-                                                <a href="{% url 'delete_tag_3' tag_3=tag_lvl_3.id %}">remover</a>
-
-
+                                                <a class="btn btn-sm btn-outline-danger" href="{% url 'delete_tag_3' tag_3=tag_lvl_3.id %}">remover</a>
                                         </div>
                                     </li>
                                 {% endfor %}

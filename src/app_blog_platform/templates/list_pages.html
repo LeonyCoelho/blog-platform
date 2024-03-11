@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container">
+
+    <h1>Listagem de Paginas</h1>
+    {% for page in pages %}
+        <div class="card mt-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-auto">
+                        {% if page.page_cover_image %}
+                            <img src="{{ page.page_cover_image.url }}" width="100px">
+                        {% else %}
+                            <img src="{% static 'placeholder.png' %}" width="100px">
+                        {% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <h4>{{ page.page_name }}</h4>
+                        <div class="mt-2">
+                            <a class="btn btn-outline-secondary" href="{% url 'view_page' page_id=page.id %}">Ver page</a>
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove_modal_{{page.id}}">
+                                Remover
+                              </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="remove_modal_{{page.id}}" tabindex="-1" aria-labelledby="remove_modal_{{page.id}}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="remove_modal_{{page.id}}">Deletar {{page.page_name}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-outline-danger" href="{% url 'delete_page' page_id=page.id %}">Remover</a>
+                </div>
+              </div>
+            </div>
+          </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
